@@ -35,6 +35,8 @@ void ofApp::setup(){
     string name;
     countrow = 0;
     countcol = 0;
+    posx = 0;
+    posy = 0;
 	ofSetFrameRate(30);
 	ofSetLogLevel("ofxCsv", OF_LOG_VERBOSE); // See what's going on inside.
   myfont.load("Big Bubu.ttf", 60);
@@ -56,7 +58,7 @@ void ofApp::setup(){
         name = "signal" + ofToString(ix,0,3,'0');
         names.push_back(name);
     }
-    nchannels = 32;
+    nchannels = 16;
 }
 
 //--------------------------------------------------------------
@@ -73,7 +75,7 @@ void ofApp::update(){
 
     for(int i = countrow*xcount; i < (countrow+1)*xcount; i++) {
         for(int j = 0; j < nchannels; j++) {
-           plotter[names[j]] << ofToFloat(csv[i][j])*1000000;
+           plotter[names[j]] << ofToFloat(csv[i][j]) * 10000;
         }
     }
 }
@@ -88,19 +90,29 @@ void ofApp::draw(){
     plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
     ofColor plotCol = ofColor::fromHsb(0, 0, 255, 255);
     ofSetColor(plotCol);
-    ofRotateZ(-90);
-    // ofRotateX(-90);
-    ofTranslate(-ofGetHeight()*2, 0);
-    myfont.drawString("Hola", ofGetWidth()/2, ofGetWidth()/2);
+    ofRotateZ(90);
+    //ofRotateX(-90);
+    ofTranslate(ofGetHeight()/2 + 400 + posx,-ofGetWidth()/2 + 100 + posy);//ofGetHeight()*2, 0);
+    glScalef(-1.0, 1.0, 1.0);
+    myfont.drawString("Hola", 0, 0);//ofGetWidth()/2, ofGetWidth()/2);
     //ofDrawBitmapString("Hola", ofGetWidth()/2, ofGetWidth()/2);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if (key == 's')
-        nchannels = nchannels + 10;
+        nchannels = nchannels + 8;
     if (key == 'g')
         nchannels = nchannels - 5;
+    if (key == 'd')
+        posx = posx + 100;
+    if (key == 'z')
+        posy = posy + 100;
+    if (key == 'q')
+        posx = posx - 100;
+    if (key == 'x')
+        posy = posy - 100;
+    ofLog() << "posx" << posx << "posy" << posy;
 }
 
 //--------------------------------------------------------------

@@ -58,4 +58,5 @@ class ofApp : public ofBaseApp{
 		bool recordingMouse;
 		ofTrueTypeFont myfont;
     vector<string> names;
+		int posx, posy;
 };
