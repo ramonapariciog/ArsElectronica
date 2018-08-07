@@ -33,16 +33,24 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     string name;
+    nextfile = false;
     countrow = 0;
     countcol = 0;
     posx = 0;
     posy = 0;
 	ofSetFrameRate(30);
 	ofSetLogLevel("ofxCsv", OF_LOG_VERBOSE); // See what's going on inside.
-  myfont.load("Big Bubu.ttf", 60);
+    myfont.load("Big Bubu.ttf", 60);
+    string path = "csvs";
+    ofDirectory dir(path);
+    dir.allowExt("csv");
+    dir.listDir();
+    dir.sort();
+    files = dir.getFiles();
+    countfiles = 0;
 
 	// Load a CSV File.
-    if(csv.load("N78_I1_2017-11-18 00_50_31.896000.csv",  " ")) {
+    if(csv.load(files[countfiles].path(),  " ")) {
         //csv.trim(); // Trim leading/trailing whitespace from non-quoted fields.
         // Like with C++ vectors, the index operator is a quick way to grab row
         // & col data, however this will cause a crash if the row or col doesn't
@@ -59,11 +67,23 @@ void ofApp::setup(){
         names.push_back(name);
     }
     nchannels = 16;
+    
+    string namefileString = files[countfiles].path();
+    vector<string> splitString = ofSplitString(namefileString, "_");
+    showedword = splitString[1];
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    if (nextfile){
+        countfiles ++;
+        csv.load(files[countfiles].path(), " ");
+        ofLog() << files[countfiles].path();
+        nextfile = false;
+        string namefileString = files[countfiles].path();
+        vector<string> splitString = ofSplitString(namefileString, "_");
+        showedword = splitString[1];
+    }
     ofFill();
     int xcount = 2;
     if (countrow * xcount <= (totalrows-2*xcount)){
@@ -94,7 +114,7 @@ void ofApp::draw(){
     //ofRotateX(-90);
     ofTranslate(ofGetHeight()/2 + 400 + posx,-ofGetWidth()/2 + 100 + posy);//ofGetHeight()*2, 0);
     glScalef(-1.0, 1.0, 1.0);
-    myfont.drawString("Hola", 0, 0);//ofGetWidth()/2, ofGetWidth()/2);
+    myfont.drawString(showedword, 0, 0);//ofGetWidth()/2, ofGetWidth()/2);
     //ofDrawBitmapString("Hola", ofGetWidth()/2, ofGetWidth()/2);
 }
 
@@ -112,6 +132,9 @@ void ofApp::keyPressed(int key){
         posx = posx - 100;
     if (key == 'x')
         posy = posy - 100;
+    //Para cambiar entre archivos
+    if (key == 'n')
+        nextfile = true;
     ofLog() << "posx" << posx << "posy" << posy;
 }
 

@@ -53,10 +53,12 @@ class ofApp : public ofBaseApp{
 
 		ofxCsv csv;
 		ofxCsv csvRecorder;
-    ofxPlotter plotter;
-    int countrow, countrows, countcol, totalrows, nchannels;
-		bool recordingMouse;
-		ofTrueTypeFont myfont;
-    vector<string> names;
+        ofxPlotter plotter;
+        vector <ofFile> files;
+        int countrow, countrows, countcol, totalrows, nchannels, countfiles;
 		int posx, posy;
+		bool recordingMouse, nextfile;
+		ofTrueTypeFont myfont;
+        vector<string> names;
+        string showedword;
 };
