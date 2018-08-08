@@ -31,7 +31,8 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxCsv.h"
+#include "threadedobject.h"
+// #include "csvManager.h"
 #include "ofxPlotter.h"
 
 class ofApp : public ofBaseApp{
@@ -40,25 +41,49 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-
 		void keyPressed  (int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
 
-		ofxCsv csv;
-		ofxCsv csvRecorder;
-        ofxPlotter plotter;
-        vector <ofFile> files;
-        int countrow, countrows, countcol, totalrows, nchannels, countfiles;
+		ofxPlotter plotter;
+		ofColor plotCol;
+
+		// Stores the signal names of the eeg array: E0 - E255
+		vector <string> names;
+
+		// Selects the total number of signals to plot
+		int nchannels;
+
+		// Alpha for fade out
+		int alpha;
+
+		// Modifies the word position on screen
 		int posx, posy;
-		bool recordingMouse, nextfile;
+
+		// counter for the rows in csv
+		int countrow;
+
+		bool charging;
+
+		// Font style object
 		ofTrueTypeFont myfont;
-        vector<string> names;
-        string showedword;
+
+		// word to plot on screen
+    string showedword;
+
+		// Thread object
+		MyThread thread;
+
+		// // Flag to control the csv transition
+		// bool nextfile;
+
+		// Not used ... For now
+		// ----------------------------------------------------
+		// void keyReleased(int key);
+		// void mouseMoved(int x, int y );
+		// void mouseDragged(int x, int y, int button);
+		// void mousePressed(int x, int y, int button);
+		// void mouseReleased(int x, int y, int button);
+		// void windowResized(int w, int h);
+		// void dragEvent(ofDragInfo dragInfo);
+		// void gotMessage(ofMessage msg);
+		// -------------------------------------------------------
 };

@@ -32,90 +32,83 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    string name;
-    nextfile = false;
-    countrow = 0;
-    countcol = 0;
+    // Aditional positions of the word
     posx = 0;
     posy = 0;
-	ofSetFrameRate(30);
-	ofSetLogLevel("ofxCsv", OF_LOG_VERBOSE); // See what's going on inside.
+  	ofSetFrameRate(30);
+    // Seting the font style
     myfont.load("Big Bubu.ttf", 60);
-    string path = "csvs";
-    ofDirectory dir(path);
-    dir.allowExt("csv");
-    dir.listDir();
-    dir.sort();
-    files = dir.getFiles();
-    countfiles = 0;
+    //Thread starting
+    thread.start();
+    // Extracts the word from the current string name file
+    showedword = thread.mycsv.currentWord;
+    // countrows
+    countrow = 0;
+    // Flag loading csv file
+    charging = false;
 
-	// Load a CSV File.
-    if(csv.load(files[countfiles].path(),  " ")) {
-        //csv.trim(); // Trim leading/trailing whitespace from non-quoted fields.
-        // Like with C++ vectors, the index operator is a quick way to grab row
-        // & col data, however this will cause a crash if the row or col doesn't
-        // exist, ie. the file didn't load.
-        ofLog() << "Print out a specific CSV value";
-        ofLog() << csv[0][1];
-        // also you can write...
-        // or you can get the row itself...
-  	}
-    totalrows = csv.getNumRows();
+    // Setting the plotter parameters
+    //-------------------------------------------------------
+    // name for the signal vector
+    string name;
+    // Starts showing 16 signals but can be increased by 'n' key
+    nchannels = 16;
     plotter.setWindowSize(500);
-    for(int ix=0; ix<csv.getNumCols(); ix++){
-        name = "signal" + ofToString(ix,0,3,'0');
+    for(int ix=0; ix < thread.mycsv.numcols; ix++){
+        name = "E" + ofToString(ix,0,3,'0');
         names.push_back(name);
     }
-    nchannels = 16;
-    
-    string namefileString = files[countfiles].path();
-    vector<string> splitString = ofSplitString(namefileString, "_");
-    showedword = splitString[1];
+    // ------------------------------------------------------
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if (nextfile){
-        countfiles ++;
-        csv.load(files[countfiles].path(), " ");
-        ofLog() << files[countfiles].path();
-        nextfile = false;
-        string namefileString = files[countfiles].path();
-        vector<string> splitString = ofSplitString(namefileString, "_");
-        showedword = splitString[1];
-    }
     ofFill();
-    int xcount = 2;
-    if (countrow * xcount <= (totalrows-2*xcount)){
-        countrow ++;
-    }
-    else{
-        countrow = 0;
-    }
+    if (!charging){
+      showedword = thread.mycsv.currentWord;
 
-    for(int i = countrow*xcount; i < (countrow+1)*xcount; i++) {
+      int xcount = 2;
+      if (countrow * xcount <= (thread.mycsv.totalrows-2*xcount))
+          countrow ++;
+      else
+          countrow = 0;
+
+      for(int i = countrow*xcount; i < (countrow+1)*xcount; i++)
+      {
         for(int j = 0; j < nchannels; j++) {
-           plotter[names[j]] << ofToFloat(csv[i][j]) * 10000;
-        }
-    }
+           plotter[names[j]] << ofToFloat(thread.mycsv.csv[i][j]) * 10000;
+          }
+      }
+   }
+   else{
+     alpha = alpha - 7;
+     if (!thread.working)
+        charging = false;
+   }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
     ofSetColor(0);
     ofBackgroundGradient(ofColor(0), ofColor(0));
     ofRotateZ(-90);
     ofTranslate(-ofGetHeight()-65, 0);
     //ofRotateY(40);
-    plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
-    ofColor plotCol = ofColor::fromHsb(0, 0, 255, 255);
+    if (!charging){
+      plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
+      plotCol = ofColor::fromHsb(0, 0, 255, 255);
+    }
+    else{
+      // plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
+      plotCol = ofColor::fromHsb(0, 0, 255, alpha);
+    }
     ofSetColor(plotCol);
     ofRotateZ(90);
     //ofRotateX(-90);
-    ofTranslate(ofGetHeight()/2 + 400 + posx,-ofGetWidth()/2 + 100 + posy);//ofGetHeight()*2, 0);
+    ofTranslate(ofGetHeight()/2 + 400 + posx,-ofGetWidth()/2 + 100 + posy);
     glScalef(-1.0, 1.0, 1.0);
-    myfont.drawString(showedword, 0, 0);//ofGetWidth()/2, ofGetWidth()/2);
-    //ofDrawBitmapString("Hola", ofGetWidth()/2, ofGetWidth()/2);
+    myfont.drawString(showedword, 0, 0);
 }
 
 //--------------------------------------------------------------
@@ -133,39 +126,42 @@ void ofApp::keyPressed(int key){
     if (key == 'x')
         posy = posy - 100;
     //Para cambiar entre archivos
-    if (key == 'n')
-        nextfile = true;
+    if (key == 'n'){
+        charging = true;
+        alpha = 255;
+        thread.mycsv.nextfile = true;
+    }
     ofLog() << "posx" << posx << "posy" << posy;
 }
 
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
-}
+// //--------------------------------------------------------------
+// void ofApp::keyReleased(int key){
+// }
+//
+// //--------------------------------------------------------------
+// void ofApp::mouseMoved(int x, int y ){
+// }
+//
+// //--------------------------------------------------------------
+// void ofApp::mouseDragged(int x, int y, int button){
+// }
+//
+// //--------------------------------------------------------------
+// void ofApp::mousePressed(int x, int y, int button){
+// }
+//
+// //--------------------------------------------------------------
+// void ofApp::mouseReleased(int x, int y, int button){
+// }
+//
+// //--------------------------------------------------------------
+// void ofApp::windowResized(int w, int h){
+// }
+//
+// //--------------------------------------------------------------
+// void ofApp::gotMessage(ofMessage msg){
+// }
+//
+// //--------------------------------------------------------------
+// void ofApp::dragEvent(ofDragInfo dragInfo){
+// }
