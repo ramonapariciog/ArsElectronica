@@ -81,7 +81,8 @@ void ofApp::update(){
       }
    }
    else{
-     alpha = alpha - 7;
+     if (alpha > 6)
+        alpha = alpha - 6;
      if (!thread.working)
         charging = false;
    }
@@ -100,13 +101,13 @@ void ofApp::draw(){
       plotCol = ofColor::fromHsb(0, 0, 255, 255);
     }
     else{
-      // plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
+      // plotter.updateHistory();
       plotCol = ofColor::fromHsb(0, 0, 255, alpha);
     }
     ofSetColor(plotCol);
     ofRotateZ(90);
     //ofRotateX(-90);
-    ofTranslate(ofGetHeight()/2 + 400 + posx,-ofGetWidth()/2 + 100 + posy);
+    ofTranslate(ofGetHeight()/2 + 500 + posx,-ofGetWidth()/2 + 100 + posy);
     glScalef(-1.0, 1.0, 1.0);
     myfont.drawString(showedword, 0, 0);
 }
