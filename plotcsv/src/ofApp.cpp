@@ -44,9 +44,6 @@ void ofApp::setup(){
     showedword = thread.mycsv.currentWord;
     // countrows
     countrow = 0;
-    // Flag loading csv file
-    charging = false;
-
     // Setting the plotter parameters
     //-------------------------------------------------------
     // name for the signal vector
@@ -63,8 +60,14 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    ofFill();
-    if (!charging){
+    int fframes = 6;
+    // ofFill();
+    if (!thread.working){
+      if (alpha < 255)
+        alpha = alpha + fframes;
+      else
+        alpha = 255;
+      // there is not load process currently
       showedword = thread.mycsv.currentWord;
 
       int xcount = 2;
@@ -77,14 +80,13 @@ void ofApp::update(){
       {
         for(int j = 0; j < nchannels; j++) {
            plotter[names[j]] << ofToFloat(thread.mycsv.csv[i][j]) * 10000;
-          }
+        }
       }
    }
    else{
-     if (alpha > 6)
-        alpha = alpha - 6;
-     if (!thread.working)
-        charging = false;
+     //  Animation for the transition time
+     if (alpha > fframes)
+        alpha = alpha - fframes;
    }
 }
 
@@ -96,12 +98,25 @@ void ofApp::draw(){
     ofRotateZ(-90);
     ofTranslate(-ofGetHeight()-65, 0);
     //ofRotateY(40);
-    if (!charging){
+    if (!thread.working){
       plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
-      plotCol = ofColor::fromHsb(0, 0, 255, 255);
+      // Fade in sequence
+      // ---------------------------------------------------
+      ofSetColor( 0, 0, 0, 255 - alpha );
+      ofFill();
+      ofRect( 0, 0,  ofGetHeight() + 140, ofGetWidth());
+      // ---------------------------------------------------
+      plotCol = ofColor::fromHsb(0, 0, 255, alpha);
     }
     else{
       // plotter.updateHistory();
+      plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
+      // Fade out sequence
+      // ---------------------------------------------------
+      ofSetColor( 0, 0, 0, 255 - alpha );
+      ofFill();
+      ofRect( 0, 0,  ofGetHeight() + 140, ofGetWidth());
+      // ---------------------------------------------------
       plotCol = ofColor::fromHsb(0, 0, 255, alpha);
     }
     ofSetColor(plotCol);
@@ -126,11 +141,9 @@ void ofApp::keyPressed(int key){
         posx = posx - 100;
     if (key == 'x')
         posy = posy - 100;
-    //Para cambiar entre archivos
     if (key == 'n'){
-        charging = true;
-        alpha = 255;
-        thread.mycsv.nextfile = true;
+      alpha = 255;
+      thread.mycsv.nextfile = true;
     }
     ofLog() << "posx" << posx << "posy" << posy;
 }

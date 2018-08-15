@@ -61,8 +61,6 @@ class ofApp : public ofBaseApp{
 		// counter for the rows in csv
 		int countrow;
 
-		bool charging;
-
 		// Font style object
 		ofTrueTypeFont myfont;
 
@@ -71,9 +69,6 @@ class ofApp : public ofBaseApp{
 
 		// Thread object
 		MyThread thread;
-
-		// // Flag to control the csv transition
-		// bool nextfile;
 
 		// Not used ... For now
 		// ----------------------------------------------------

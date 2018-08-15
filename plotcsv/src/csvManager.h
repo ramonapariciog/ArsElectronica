@@ -8,10 +8,10 @@ class CsvManager{
 		// File counter
     int countfiles;
 		bool reload;
+		string extract_word();
 	public:
 		void prepareListFiles(string rootname);
 		void chargeFile();
-		string extract_word();
 		// csv object
 		ofxCsv csv;
 		// Row counters for the data array
