@@ -70,17 +70,20 @@ void ofApp::update(){
     // there is not load process currently
     showedword = thread.mycsv.currentWord;
 
-    int xcount = 2;
-    if (countrow * xcount <= (thread.mycsv.totalrows-2*xcount))
-        countrow ++;
-    else
-        countrow = 0;
-
+    int xcount = 7;
     for(int i = countrow*xcount; i < (countrow+1)*xcount; i++)
     {
       for(int j = 0; j < nchannels; j++) {
          plotter[names[j]] << ofToFloat(thread.mycsv.csv[i][j]) * 10000;
       }
+    }
+    if (countrow * xcount <= (thread.mycsv.totalrows-(2*xcount))){
+      countrow ++;
+    }
+    else{
+      countrow = 0;
+      alpha = 255;
+      thread.mycsv.nextfile = true;
     }
   }
   else{
