@@ -9,13 +9,14 @@ class CsvManager{
     int countfiles;
 		bool reload;
 		string extract_word();
+		int extract_night_number();
 	public:
 		void prepareListFiles(string rootname);
 		void chargeFile();
 		// csv object
 		ofxCsv csv;
 		// Row counters for the data array
-    int totalrows, numcols;
+    int totalrows, numcols, currentNight;
 		bool nextfile;
 		// Stores the file list on csv folder
 		vector <ofFile> files;

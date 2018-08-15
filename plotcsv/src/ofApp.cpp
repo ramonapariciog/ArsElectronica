@@ -42,6 +42,8 @@ void ofApp::setup(){
   thread.start();
   // Extracts the word from the current string name file
   showedword = thread.mycsv.currentWord;
+  showednight = ofToString(thread.mycsv.currentNight, 0, 3, '0');
+  shownight = false;
   // countrows
   countrow = 0;
   // Setting the plotter parameters
@@ -69,7 +71,7 @@ void ofApp::update(){
       alpha = 255;
     // there is not load process currently
     showedword = thread.mycsv.currentWord;
-
+    showednight = ofToString(thread.mycsv.currentNight, 0, 3, '0');
     int xcount = 7;
     for(int i = countrow*xcount; i < (countrow+1)*xcount; i++)
     {
@@ -110,9 +112,11 @@ void ofApp::draw(){
   // ---------------------------------------------------
   ofSetColor(plotCol);
   ofRotateZ(90);
-  ofTranslate(ofGetHeight()/2 + 500 + posx,-ofGetWidth()/2 + 100 + posy);
+  ofTranslate(ofGetHeight()/2 + 550 + posx,-ofGetWidth()/2 + 100 + posy);
   glScalef(-1.0, 1.0, 1.0);
   myfont.drawString(showedword, 0, 0);
+  if (shownight)
+    myfont.drawString(showednight, 0, 200);
 }
 
 //--------------------------------------------------------------
@@ -122,13 +126,19 @@ void ofApp::keyPressed(int key){
   if (key == 'g')
       nchannels = nchannels - 5;
   if (key == 'd')
-      posx = posx + 100;
+      posx = posx + 50;
   if (key == 'z')
-      posy = posy + 100;
+      posy = posy + 50;
   if (key == 'q')
-      posx = posx - 100;
+      posx = posx - 50;
   if (key == 'x')
-      posy = posy - 100;
+      posy = posy - 50;
+  if (key == 'i'){
+    if (shownight)
+      shownight = false;
+    else
+      shownight = true;
+  }
   if (key == 'n'){
     alpha = 255;
     thread.mycsv.nextfile = true;

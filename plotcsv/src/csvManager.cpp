@@ -30,11 +30,18 @@ void CsvManager::chargeFile(){
     numcols = csv.getNumCols();
     // deactivate the reload flag
     currentWord = extract_word();
+    currentNight = extract_night_number();
     reload = false;
   }
 }
 
 string CsvManager::extract_word(){
-  vector<string> splitString = ofSplitString(currentfile, "_");
-  return splitString[1];
+  vector<string> splitStr = ofSplitString(currentfile, "_");
+  return splitStr[1];
+}
+
+int CsvManager::extract_night_number(){
+  vector<string> splitStr1 = ofSplitString(currentfile, "_");
+  vector<string> splitStr2 = ofSplitString(splitStr1[0], "/");
+  return ofToInt(splitStr2[2]);
 }

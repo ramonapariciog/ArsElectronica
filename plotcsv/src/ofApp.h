@@ -65,11 +65,14 @@ class ofApp : public ofBaseApp{
 		ofTrueTypeFont myfont;
 
 		// word to plot on screen
-    string showedword;
+    string showedword, showednight;
 
 		// Thread object
 		MyThread thread;
 
+    // show the night number?
+		bool shownight;
+		
 		// Not used ... For now
 		// ----------------------------------------------------
 		// void keyReleased(int key);
