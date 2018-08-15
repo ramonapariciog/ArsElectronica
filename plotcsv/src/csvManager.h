@@ -6,13 +6,15 @@
 class CsvManager{
 	private:
 		// File counter
-    int countfiles;
+    int countfiles, countnight, playCurrentNight;
 		bool reload;
+		vector<int> nightsNumbers;
+		vector<int> nightsIndices;
 		string extract_word();
-		int extract_night_number();
+		int extract_night_number(string filepath);
+		void getNights();
+		void prepareListCsv();
 	public:
-		void prepareListFiles(string rootname);
-		void chargeFile();
 		// csv object
 		ofxCsv csv;
 		// Row counters for the data array
@@ -22,5 +24,7 @@ class CsvManager{
 		vector <ofFile> files;
 		string currentfile;
 		string currentWord;
+		void prepareListFiles(string rootname);
+		void chargeFile();
 };
 #endif

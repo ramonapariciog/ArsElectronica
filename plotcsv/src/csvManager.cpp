@@ -8,6 +8,11 @@ void CsvManager::prepareListFiles(string rootname){
   dir.listDir();
   dir.sort();
   files = dir.getFiles();
+  // Night vector to match csv and wav files
+  countnight = 0;
+  getNights();
+  playCurrentNight = nightsNumbers[countnight];
+  prepareListCsv();
   // Counter files Initialized on zero for the firs file on list
   countfiles = 0;
   nextfile = false;
@@ -22,7 +27,7 @@ void CsvManager::chargeFile(){
   }
   if (reload){
     // current csv file string
-    currentfile = files[countfiles].path();
+    currentfile = files[nightsIndices[countfiles]].path();
     // Load a CSV File.
     csv.load(currentfile,  " ");
     // To know the total number of samples in csv and signals
@@ -30,9 +35,34 @@ void CsvManager::chargeFile(){
     numcols = csv.getNumCols();
     // deactivate the reload flag
     currentWord = extract_word();
-    currentNight = extract_night_number();
+    currentNight = extract_night_number(currentfile);
     reload = false;
   }
+}
+
+void CsvManager::prepareListCsv(){
+  int night;
+  for(int i = 0; i < files.size(); i++){
+    night = extract_night_number(files[i].path());
+    if (night == playCurrentNight){
+      nightsIndices.push_back(i);
+    }
+  }
+  for(int i =0; i < nightsIndices.size(); i++)
+    ofLog() << files[nightsIndices[i]].path();
+}
+
+void CsvManager::getNights(){
+  int night;
+  for(int i = 0; i < files.size(); i++)
+  {
+    night = extract_night_number(files[i].path());
+    std::vector<int>::iterator it = std::find(nightsNumbers.begin(), nightsNumbers.end(), night);
+    if(it == nightsNumbers.end())
+      nightsNumbers.push_back(night);
+  }
+  for(int i = 0 ; i < nightsNumbers.size(); i++)
+    ofLog() << "Enlisted Night: #" << nightsNumbers[i];
 }
 
 string CsvManager::extract_word(){
@@ -40,8 +70,8 @@ string CsvManager::extract_word(){
   return splitStr[1];
 }
 
-int CsvManager::extract_night_number(){
-  vector<string> splitStr1 = ofSplitString(currentfile, "_");
+int CsvManager::extract_night_number(string filepath){
+  vector<string> splitStr1 = ofSplitString(filepath, "_");
   vector<string> splitStr2 = ofSplitString(splitStr1[0], "/");
   return ofToInt(splitStr2[2]);
 }
