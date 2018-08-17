@@ -21,7 +21,23 @@ void CsvManager::prepareListFiles(string rootname){
 
 void CsvManager::chargeFile(){
   if (nextfile){
-    countfiles ++;
+    if (countfiles + 1 < nightsIndices.size()){
+      countfiles ++;
+      ofLog() << countfiles << " de " << nightsIndices.size();
+    }
+    else{
+      countfiles = 0;
+      if (countnight < nightsNumbers.size()){
+        countnight ++;
+        ofLog() << countnight << " de " << nightsNumbers.size();
+      }
+      else
+        countnight = 0;
+      playCurrentNight = nightsNumbers[countnight];
+      ofLog() << playCurrentNight;
+      nightsIndices.clear();
+      prepareListCsv();
+    }
     reload = true;
     nextfile = false;
   }
@@ -48,6 +64,7 @@ void CsvManager::prepareListCsv(){
       nightsIndices.push_back(i);
     }
   }
+  std::random_shuffle(nightsIndices.begin(), nightsIndices.end());
   for(int i =0; i < nightsIndices.size(); i++)
     ofLog() << files[nightsIndices[i]].path();
 }
@@ -61,6 +78,7 @@ void CsvManager::getNights(){
     if(it == nightsNumbers.end())
       nightsNumbers.push_back(night);
   }
+  std::random_shuffle(nightsNumbers.begin(), nightsNumbers.end());
   for(int i = 0 ; i < nightsNumbers.size(); i++)
     ofLog() << "Enlisted Night: #" << nightsNumbers[i];
 }
