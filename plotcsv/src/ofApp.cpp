@@ -65,6 +65,7 @@ void ofApp::update(){
   int fframes = 6;
   // ofFill();
   if (!thread.working){
+    thread.mycsv.dreamplay.playDream();
     if (alpha < 255)
       alpha = alpha + fframes;
     else

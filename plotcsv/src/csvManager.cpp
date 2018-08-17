@@ -13,6 +13,8 @@ void CsvManager::prepareListFiles(string rootname){
   getNights();
   playCurrentNight = nightsNumbers[countnight];
   prepareListCsv();
+  dreamplay.ListWavFiles("NIGHTS");
+  dreamplay.loadDream(playCurrentNight);
   // Counter files Initialized on zero for the firs file on list
   countfiles = 0;
   nextfile = false;
@@ -29,6 +31,7 @@ void CsvManager::chargeFile(){
       countfiles = 0;
       if (countnight < nightsNumbers.size()){
         countnight ++;
+        dreamplay.loadDream(playCurrentNight);
         ofLog() << countnight << " de " << nightsNumbers.size();
       }
       else

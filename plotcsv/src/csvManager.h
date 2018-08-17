@@ -2,6 +2,7 @@
 #define _CSV_MANAGER
 #include "ofMain.h"
 #include "ofxCsv.h"
+#include "dreamNarrative.h"
 
 class CsvManager{
 	private:
@@ -17,6 +18,7 @@ class CsvManager{
 	public:
 		// csv object
 		ofxCsv csv;
+		DreamNarrative dreamplay;
 		// Row counters for the data array
     int totalrows, numcols, currentNight;
 		bool nextfile;
