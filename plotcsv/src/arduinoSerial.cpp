@@ -73,14 +73,16 @@
 //-----------------------------------------------------------------------------------
 // ------------------ To calculate the data received from arduino -------------------
     int ArduinoSerial::locate(unsigned char ch){
+      int result;
       switch ((ch&0xC0)>>6){
         case 0:bytesReadString[0]=ch&0x3F;
-          		 return 1;
+          		 result = 1;
         case 1:bytesReadString[1]=ch&0x3F;
-               return 2;
+               result =  2;
         case 3:bytesReadString[2]=ch&0x0F;
-               return 3;
+               result =  3;
       }
+      return result;
     }
 // -------------------The same mentioned above---------------------------------------
     int ArduinoSerial::calculate(unsigned char arr[]){
