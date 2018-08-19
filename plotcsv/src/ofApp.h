@@ -62,7 +62,7 @@ class ofApp : public ofBaseApp{
 		int countrow;
 
 		// Font style object
-		ofTrueTypeFont myfont;
+		ofTrueTypeFont myfont, infofont;
 
 		// word to plot on screen
     string showedword, showednight;
@@ -70,9 +70,9 @@ class ofApp : public ofBaseApp{
 		// Thread object
 		MyThread thread;
 
-    // show the night number?
-		bool shownight;
-		
+    // show the night number? and flip the plot falling down/up
+		bool shownight, reverse;
+
 		// Not used ... For now
 		// ----------------------------------------------------
 		// void keyReleased(int key);

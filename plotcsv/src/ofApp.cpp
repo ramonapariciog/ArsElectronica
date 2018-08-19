@@ -37,13 +37,15 @@ void ofApp::setup(){
   posy = 0;
   ofSetFrameRate(30);
   // Seting the font style
-  myfont.load("Big Bubu.ttf", 60);
+  myfont.load("InaiMathi.ttf", 60);
+  infofont.load("InaiMathi.ttf", 20);
   //Thread starting
   thread.start();
   // Extracts the word from the current string name file
   showedword = thread.mycsv.currentWord;
   showednight = ofToString(thread.mycsv.currentNight, 0, 3, '0');
   shownight = false;
+  reverse = false;
   // countrows
   countrow = 0;
   // Setting the plotter parameters
@@ -100,47 +102,73 @@ void ofApp::update(){
 void ofApp::draw(){
   ofSetColor(0);
   ofBackgroundGradient(ofColor(0), ofColor(0));
-  ofRotateZ(-90);
-  ofTranslate(-ofGetHeight()-65, 0);
-  // plotter.updateHistory();
-  plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
-  // Fade in/out sequence
-  // ---------------------------------------------------
-  ofSetColor( 0, 0, 0, 255 - alpha );
-  ofFill();
-  ofRect( 0, 0,  ofGetHeight() + 140, ofGetWidth());
-  plotCol = ofColor::fromHsb(0, 0, 255, alpha);
-  // ---------------------------------------------------
-  ofSetColor(plotCol);
-  ofRotateZ(90);
-  ofTranslate(ofGetHeight()/2 + 550 + posx,-ofGetWidth()/2 + 100 + posy);
-  glScalef(-1.0, 1.0, 1.0);
-  myfont.drawString(showedword, 0, 0);
-  if (shownight)
-    myfont.drawString(showednight, 0, 200);
+  if(!reverse){
+    ofRotateZ(90);
+    ofTranslate(-65, -ofGetWidth());
+    // plotter.updateHistory();
+    plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
+    // Fade in/out sequence
+    // ---------------------------------------------------
+    ofSetColor( 0, 0, 0, 255 - alpha );
+    ofFill();
+    ofRect( 0, 0,  ofGetHeight() + 140, ofGetWidth());
+    plotCol = ofColor::fromHsb(0, 0, 255, alpha);
+    ofSetColor(plotCol);
+    ofRotateZ(-90);
+    ofTranslate(-(ofGetWidth()/2) + posx, ofGetHeight()/4 + 100 + posy);
+  }
+  else{
+    ofRotateZ(-90);
+    ofTranslate(-ofGetHeight()-65, 0);
+    // plotter.updateHistory();
+    plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
+    // Fade in/out sequence
+    // ---------------------------------------------------
+    ofSetColor( 0, 0, 0, 255 - alpha );
+    ofFill();
+    ofRect( 0, 0,  ofGetHeight() + 140, ofGetWidth());
+    plotCol = ofColor::fromHsb(0, 0, 255, alpha);
+    // ---------------------------------------------------
+    ofSetColor(plotCol);
+    ofRotateZ(90);
+    ofTranslate((ofGetWidth()/2) + posx, -ofGetWidth()/2 + 100 + posy);
+  }
+  glScalef(1.0, -1.0, 1.0);
+  myfont.drawString(showedword, -myfont.stringWidth(showedword)/2, 0);
+  if (shownight){
+    glScalef(1.0, -1.0, 1.0);
+    infofont.drawString(showednight, -infofont.stringWidth(showednight)/2, 200);
+  }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
   if (key == 's')
       nchannels = nchannels + 8;
-  if (key == 'g')
-      nchannels = nchannels - 5;
-  if (key == 'd')
-      posx = posx + 50;
-  if (key == 'z')
-      posy = posy + 50;
-  if (key == 'q')
-      posx = posx - 50;
-  if (key == 'x')
-      posy = posy - 50;
+  if (key == OF_KEY_RIGHT)
+      posx = posx + 10;
+  if (key == OF_KEY_UP)
+      posy = posy + 10;
+  if (key == OF_KEY_LEFT)
+      posx = posx - 10;
+  if (key == OF_KEY_DOWN)
+      posy = posy - 10;
   if (key == 'i'){
+    // To show the night number in screen
     if (shownight)
       shownight = false;
     else
       shownight = true;
   }
+  if (key == 'r'){
+    // to revert the direction of the lines
+    if (reverse)
+      reverse = false;
+    else
+      reverse = true;
+  }
   if (key == 'n'){
+    // To change the word_scene
     alpha = 255;
     thread.mycsv.nextfile = true;
   }
