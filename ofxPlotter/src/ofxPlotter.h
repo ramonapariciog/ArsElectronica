@@ -160,9 +160,10 @@ public:
         float colorspaceWidth = 255. / (float)graphCount;
         for (std::map<std::string, ofxPlotter::Value>::iterator i = values.begin(); i != values.end(); i++) {
             std::vector<ofxPlotter::Value>* historyValues = &history[i->first];
-            
+            // bluelines
             ofColor plotColor = ofColor::fromHsb(150, 255, 255, 255);
-            //(index * colorspaceWidth), 255, 150, 255);
+            // ofColor plotColor = ofColor::fromHsb(0, 0, 0, 255);
+            // ofColor plotColor = ofColor::fromHsb(index * colorspaceWidth), 255, 150, 255);
             
             // Measuring the function scale
             float sum = 0;
