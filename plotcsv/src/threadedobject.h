@@ -21,7 +21,7 @@ class MyThread : public ofThread{
             // to wait for the process
             working = false;
             // start the threaded function
-            startThread(); //true, false);
+            startThread(true); //true, false);
         }
 
         void threadedFunction(){
