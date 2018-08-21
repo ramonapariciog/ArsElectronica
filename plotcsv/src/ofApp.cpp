@@ -1,51 +1,27 @@
-/**
- *  ofxCsv
- *  Inspired and based on Ben Fry's [table class](http://benfry.com/writing/map/Table.pde)
- *
- *  The MIT License
- *
- *  Copyright (c) 2011-2014 Paul Vollmer, http://www.wng.cc
- *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
- *
- *  The above copyright notice and this permission notice shall be included in
- *  all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- *  THE SOFTWARE.
- *
- *  @modified           2016.04.23
- *  @version            0.2.0
- */
 
 #include "ofApp.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
   // Aditional positions of the word
-  posx = 0;
-  posy = 0;
+  if(XML.loadFile("Settings.xml") ){
+		ofLog() << "Settings.xml loaded!";
+	}else{
+		ofLog() << "unable to load mySettings.xml check data/ folder";
+	}
+  posx = XML.getValue("SETTINGS:POSITIONSTRING:POSX", 0);
+  posy = XML.getValue("SETTINGS:POSITIONSTRING:POSY", 0);
   ofSetFrameRate(30);
   // Seting the font style
   myfont.load("InaiMathi.ttf", 60);
-  infofont.load("InaiMathi.ttf", 20);
+  infofont.load("Big Bubu.ttf", 20);
   //Thread starting
   thread.start();
   // Extracts the word from the current string name file
   showedword = thread.mycsv.currentWord;
   showednight = ofToString(thread.mycsv.currentNight, 0, 3, '0');
-  shownight = false;
-  reverse = false;
+  showinfo = false;
+  reverse = XML.getValue("SETTINGS:DIRECTION:REVERSE", true);
   // countrows
   countrow = 0;
   // Setting the plotter parameters
@@ -53,13 +29,14 @@ void ofApp::setup(){
   // name for the signal vector
   string name;
   // Starts showing 16 signals but can be increased by 'n' key
-  nchannels = 16;
+  nchannels = XML.getValue("SETTINGS:CHANNELS:NCHANNELS", 16);
   plotter.setWindowSize(500);
   for(int ix=0; ix < thread.mycsv.numcols; ix++){
       name = "E" + ofToString(ix,0,3,'0');
       names.push_back(name);
   }
   // ------------------------------------------------------
+  startTime = ofGetElapsedTimef();
 }
 
 //--------------------------------------------------------------
@@ -93,6 +70,7 @@ void ofApp::update(){
   }
   else{
    //  Animation for the transition time
+    startTime = ofGetElapsedTimef();
     if (alpha > fframes)
       alpha = alpha - fframes;
   }
@@ -135,9 +113,14 @@ void ofApp::draw(){
   }
   glScalef(1.0, -1.0, 1.0);
   myfont.drawString(showedword, -myfont.stringWidth(showedword)/2, 0);
-  if (shownight){
+  if (showinfo){
     glScalef(1.0, -1.0, 1.0);
-    infofont.drawString(showednight, -infofont.stringWidth(showednight)/2, 200);
+    info = "Night " + ofToString(showednight);
+    info = info + " posx: " + ofToString(posx);
+    info = info + " posy: " + ofToString(posy);
+    info = info + " n.channels" + ofToString(nchannels);
+    info = info + " time: " + ofToString((int)(ofGetElapsedTimef()-startTime));
+    infofont.drawString(info, -infofont.stringWidth(info)/2, 200);
   }
 }
 
@@ -155,10 +138,10 @@ void ofApp::keyPressed(int key){
       posy = posy - 10;
   if (key == 'i'){
     // To show the night number in screen
-    if (shownight)
-      shownight = false;
+    if (showinfo)
+      showinfo = false;
     else
-      shownight = true;
+      showinfo = true;
   }
   if (key == 'r'){
     // to revert the direction of the lines
@@ -172,9 +155,17 @@ void ofApp::keyPressed(int key){
     alpha = 255;
     thread.mycsv.nextfile = true;
   }
-  ofLog() << "posx" << posx << "posy" << posy;
 }
 
+void ofApp::exit(){
+  XML.setValue("SETTINGS:POSITIONSTRING:POSX", posx);
+  XML.setValue("SETTINGS:POSITIONSTRING:POSY", posy);
+  XML.setValue("SETTINGS:DIRECTION:REVERSE", reverse);
+  XML.setValue("SETTINGS:CHANNELS:NCHANNELS", nchannels);
+  XML.saveFile("Settings.xml");
+  thread.stop();
+  ofLog() << "saliendo";
+}
 // //--------------------------------------------------------------
 // void ofApp::keyReleased(int key){
 // }

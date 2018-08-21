@@ -1,2 +1,3 @@
 ofxPlotter
 ofxCsv
+ofxXmlSettings

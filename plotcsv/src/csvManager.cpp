@@ -15,7 +15,7 @@ void CsvManager::prepareListFiles(string rootname){
   prepareListCsv();
   dreamplay.ListWavFiles("NIGHTS");
   dreamplay.loadDream(playCurrentNight);
-  // Counter files Initialized on zero for the firs file on list
+  // Counter files Initialized on zero for the first file on list
   countfiles = 0;
   nextfile = false;
   reload = true;

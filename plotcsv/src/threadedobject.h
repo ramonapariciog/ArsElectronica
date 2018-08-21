@@ -44,6 +44,14 @@ class MyThread : public ofThread{
               }
             }
         }
+
+        void stop(){
+          //unlink(ofToDataPath(filename).c_str());
+          if(comunication)
+            ars.serial.close();
+          stopThread();
+          // reportFile.close();
+        }
     };
 //
 //         void draw(){
@@ -54,11 +62,6 @@ class MyThread : public ofThread{
 //             }
 //         }
 //
-//         void stop(){
-//             //unlink(ofToDataPath(filename).c_str());
-//             stopThread();
-//             reportFile.close();
-//         }
 //
 // };
 
