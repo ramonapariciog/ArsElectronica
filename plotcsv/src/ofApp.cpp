@@ -52,7 +52,7 @@ void ofApp::update(){
     // there is not load process currently
     showedword = thread.mycsv.currentWord;
     showednight = ofToString(thread.mycsv.currentNight, 0, 3, '0');
-    int xcount = 7;
+    int xcount = 10;
     for(int i = countrow*xcount; i < (countrow+1)*xcount; i++)
     {
       for(int j = 0; j < nchannels; j++) {
@@ -119,8 +119,11 @@ void ofApp::draw(){
     info = info + " posx: " + ofToString(posx);
     info = info + " posy: " + ofToString(posy);
     info = info + " n.channels" + ofToString(nchannels);
-    info = info + " time: " + ofToString((int)(ofGetElapsedTimef()-startTime));
+    int timeelapsed = (int)(ofGetElapsedTimef()-startTime);
+    info = info + " time: " + ofToString(timeelapsed);
     infofont.drawString(info, -infofont.stringWidth(info)/2, 200);
+    if (timeelapsed > 75)
+      thread.mycsv.nextfile = true;
   }
 }
 

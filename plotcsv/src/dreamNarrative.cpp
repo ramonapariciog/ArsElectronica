@@ -30,8 +30,12 @@ void DreamNarrative::playDream(){
   }
 }
 
+bool DreamNarrative::isplaying(){
+  return dream.isPlaying();
+}
+
 int DreamNarrative::extract_night_number(string filepath){
   vector<string> splitStr1 = ofSplitString(filepath, " ");
   vector<string> splitStr2 = ofSplitString(splitStr1[0], "/");
-  return ofToInt(splitStr2[2]);
+  return ofToInt(splitStr2.back());
 }

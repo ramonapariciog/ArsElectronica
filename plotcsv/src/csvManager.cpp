@@ -30,9 +30,11 @@ void CsvManager::chargeFile(){
     else{
       countfiles = 0;
       if (countnight < nightsNumbers.size()){
-        countnight ++;
-        dreamplay.loadDream(playCurrentNight);
-        ofLog() << countnight << " de " << nightsNumbers.size();
+        if (!dreamplay.isplaying()){
+          countnight ++;
+          dreamplay.loadDream(playCurrentNight);
+          ofLog() << countnight << " de " << nightsNumbers.size();
+        }
       }
       else
         countnight = 0;
@@ -94,5 +96,5 @@ string CsvManager::extract_word(){
 int CsvManager::extract_night_number(string filepath){
   vector<string> splitStr1 = ofSplitString(filepath, "_");
   vector<string> splitStr2 = ofSplitString(splitStr1[0], "/");
-  return ofToInt(splitStr2[2]);
+  return ofToInt(splitStr2.back());
 }

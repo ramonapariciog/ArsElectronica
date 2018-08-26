@@ -11,6 +11,7 @@ class DreamNarrative{
     void ListWavFiles(string rootname);
     void loadDream(int nightnumber);
     void playDream();
+    bool isplaying();
     bool played;
 };
 #endif
