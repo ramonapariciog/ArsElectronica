@@ -51,19 +51,19 @@ void loop() {
 
   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
   if (buttonState == HIGH){
-    Serial.write("N");
+    Serial.write("S");
     delay(500); 
     digitalWrite(ledPin, HIGH);
   }
   else if(buttonState2 == HIGH) {
     // turn LED on:
-    Serial.write("S");
+    Serial.write("P");
     delay(500);
     digitalWrite(ledPin, HIGH);
   }
   else if(buttonState3 == HIGH) {
     // turn LED on:
-    Serial.write("P");
+    Serial.write("N");
     delay(500);
     digitalWrite(ledPin, HIGH);
   }
