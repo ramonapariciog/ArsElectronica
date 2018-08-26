@@ -13,7 +13,7 @@ void CsvManager::prepareListFiles(string rootname){
   getNights();
   playCurrentNight = nightsNumbers[countnight];
   prepareListCsv();
-  dreamplay.ListWavFiles("NIGHTS");
+  dreamplay.ListWavFiles("audio");
   dreamplay.loadDream(playCurrentNight);
   // Counter files Initialized on zero for the first file on list
   countfiles = 0;
