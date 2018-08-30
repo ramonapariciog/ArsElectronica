@@ -11,6 +11,9 @@ void ofApp::setup(){
 	}
   posx = XML.getValue("SETTINGS:POSITIONSTRING:POSX", 0);
   posy = XML.getValue("SETTINGS:POSITIONSTRING:POSY", 0);
+  flipv = XML.getValue("SETTINGS:FLIPVER:VERT", 1);
+  fliph = XML.getValue("SETTINGS:FLIPHOR:HORZ", 1);
+  track = XML.getValue("SETTINGS:TRACKSCREEN:TRACKX", 0);
   ofSetFrameRate(30);
   // Seting the font style
   myfont.load("InaiMathi.ttf", 60);
@@ -81,56 +84,60 @@ void ofApp::draw(){
   ofSetColor(0);
   ofBackgroundGradient(ofColor(0), ofColor(0));
   if(!reverse){
+    ofRotate(track, 0.1, 0, 0);
     ofRotateZ(90);
     ofTranslate(-65, -ofGetWidth());
     // plotter.updateHistory();
-    plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
+    plotter.draw(0, 0, ofGetHeight()*2 + 140, ofGetWidth());
     // Fade in/out sequence
     // ---------------------------------------------------
     ofSetColor( 0, 0, 0, 255 - alpha );
     ofFill();
-    ofRect( 0, 0,  ofGetHeight() + 140, ofGetWidth());
+    ofRect( 0, 0,  ofGetHeight()*2 + 140, ofGetWidth());
     plotCol = ofColor::fromHsb(0, 0, 255, alpha);
     ofSetColor(plotCol);
     ofRotateZ(-90);
     ofTranslate(-(ofGetWidth()/2) + posx, ofGetHeight()/4 + 100 + posy);
   }
   else{
+    ofRotate(track, 0.1, 0, 0);
     ofRotateZ(-90);
     ofTranslate(-ofGetHeight()-65, 0);
     // plotter.updateHistory();
-    plotter.draw(0, 0, ofGetHeight() + 140, ofGetWidth());
+    plotter.draw(0, 0, ofGetHeight()*2 + 140, ofGetWidth());
     // Fade in/out sequence
     // ---------------------------------------------------
     ofSetColor( 0, 0, 0, 255 - alpha );
     ofFill();
-    ofRect( 0, 0,  ofGetHeight() + 140, ofGetWidth());
+    ofRect( 0, 0,  ofGetHeight()*2 + 140, ofGetWidth());
     plotCol = ofColor::fromHsb(0, 0, 255, alpha);
     // ---------------------------------------------------
     ofSetColor(plotCol);
     ofRotateZ(90);
     ofTranslate((ofGetWidth()/2) + posx, -ofGetWidth()/2 + 100 + posy);
   }
-  glScalef(1.0, -1.0, 1.0);
-  myfont.drawString(showedword, -myfont.stringWidth(showedword)/2, 0);
   if (showinfo){
-    glScalef(1.0, -1.0, 1.0);
     info = "Night " + ofToString(showednight);
-    info = info + " posx: " + ofToString(posx);
-    info = info + " posy: " + ofToString(posy);
-    info = info + " n.channels" + ofToString(nchannels);
+    info = info + ", posx: " + ofToString(posx);
+    info = info + ", posy: " + ofToString(posy);
+    info = info + ", n.channels: " + ofToString(nchannels);
+    info = info + ", Xtrack: " + ofToString(track);
     int timeelapsed = (int)(ofGetElapsedTimef()-startTime);
-    info = info + " time: " + ofToString(timeelapsed);
+    info = info + ", time: " + ofToString(timeelapsed);
     infofont.drawString(info, -infofont.stringWidth(info)/2, 200);
     if (timeelapsed > 75)
       thread.mycsv.nextfile = true;
   }
+  glScalef(fliph, flipv, 1.0);
+  myfont.drawString(showedword, -myfont.stringWidth(showedword)/2, 0);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
   if (key == 's')
       nchannels = nchannels + 8;
+  if (key == 'd')
+      nchannels = nchannels - 8;
   if (key == OF_KEY_RIGHT)
       posx = posx + 10;
   if (key == OF_KEY_UP)
@@ -140,7 +147,7 @@ void ofApp::keyPressed(int key){
   if (key == OF_KEY_DOWN)
       posy = posy - 10;
   if (key == 'i'){
-    // To show the night number in screen
+    // To show the info in screen
     if (showinfo)
       showinfo = false;
     else
@@ -152,6 +159,22 @@ void ofApp::keyPressed(int key){
       reverse = false;
     else
       reverse = true;
+  }
+  if (key == 'u')
+    track = track + 5;
+  if (key == 'm')
+    track = track - 5;
+  if (key == 'f'){
+    if (flipv == 1)
+      flipv = -1;
+    else
+      flipv = 1;
+  }
+  if (key == 'h'){
+    if (fliph == 1)
+      fliph = -1;
+    else
+      fliph = 1;
   }
   if (key == 'n'){
     // To change the word_scene
@@ -165,6 +188,9 @@ void ofApp::exit(){
   XML.setValue("SETTINGS:POSITIONSTRING:POSY", posy);
   XML.setValue("SETTINGS:DIRECTION:REVERSE", reverse);
   XML.setValue("SETTINGS:CHANNELS:NCHANNELS", nchannels);
+  XML.setValue("SETTINGS:TRACKSCREEN:TRACKX", track);
+  XML.setValue("SETTINGS:FLIPVER:VERT", flipv);
+  XML.setValue("SETTINGS:FLIPHOR:HORZ", fliph);
   XML.saveFile("Settings.xml");
   thread.stop();
   ofLog() << "saliendo";

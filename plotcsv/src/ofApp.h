@@ -33,8 +33,14 @@ class ofApp : public ofBaseApp{
 		// counter for the rows in csv
 		int countrow;
 
+		// track in x
+		int track;
+
     // time elapsed since loading the csv file
 		float startTime;
+
+		// flip vertical and horizontal
+		float flipv, fliph;
 
 		// Font style object
 		ofTrueTypeFont myfont, infofont;
