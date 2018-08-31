@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxCsv.h"
 #include "dreamNarrative.h"
+#include "recordmodes.h"
 
 class CsvManager{
 	private:
@@ -18,9 +19,12 @@ class CsvManager{
 	public:
 		// csv object
 		ofxCsv csv;
+    // audio player
 		DreamNarrative dreamplay;
+		// night mode selector
+		RecordModes rmod;
 		// Row counters for the data array
-    int totalrows, numcols, currentNight;
+    int totalrows, numcols, currentNight, mode;
 		bool nextfile;
 		// Stores the file list on csv folder
 		vector <ofFile> files;

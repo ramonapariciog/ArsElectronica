@@ -12,6 +12,9 @@ void CsvManager::prepareListFiles(string rootname){
   countnight = 0;
   getNights();
   playCurrentNight = nightsNumbers[countnight];
+  rmod.defineMode();
+  mode = rmod.whoIs(playCurrentNight);
+  ofLog() << "Noche #" << playCurrentNight << " modo " << mode;
   prepareListCsv();
   dreamplay.ListWavFiles("audio");
   dreamplay.loadDream(playCurrentNight);
@@ -23,23 +26,41 @@ void CsvManager::prepareListFiles(string rootname){
 
 void CsvManager::chargeFile(){
   if (nextfile){
-    if (countfiles + 1 < nightsIndices.size()){
-      countfiles ++;
-      ofLog() << countfiles << " de " << nightsIndices.size();
-    }
-    else{
-      countfiles = 0;
-      if (countnight < nightsNumbers.size()){
-        if (!dreamplay.isplaying()){
-          countnight ++;
-          dreamplay.loadDream(playCurrentNight);
-          ofLog() << countnight << " de " << nightsNumbers.size();
-        }
+    if (dreamplay.isplaying())
+    {
+      if (countfiles + 1 < nightsIndices.size())
+      {
+        countfiles ++;
+        ofLog() << countfiles << " de " << nightsIndices.size();
       }
       else
+      {
+        countfiles = 0;
+        nightsIndices.clear();
+        prepareListCsv();
+      }
+    }
+    else
+    {
+      countfiles = 0;
+      if (countnight + 1 < nightsNumbers.size())
+      {
+        countnight ++;
+        playCurrentNight = nightsNumbers[countnight];
+        mode = rmod.whoIs(playCurrentNight);
+        dreamplay.loadDream(playCurrentNight);
+        ofLog() << countnight << " de " << nightsNumbers.size();
+      }
+      else
+      {
         countnight = 0;
-      playCurrentNight = nightsNumbers[countnight];
-      ofLog() << playCurrentNight;
+        std::random_shuffle(nightsNumbers.begin(), nightsNumbers.end());
+        playCurrentNight = nightsNumbers[countnight];
+        mode = rmod.whoIs(playCurrentNight);
+        dreamplay.loadDream(playCurrentNight);
+        ofLog() << countnight << " de " << nightsNumbers.size();
+      }
+      ofLog() << "Noche #" << playCurrentNight << " modo " << mode;
       nightsIndices.clear();
       prepareListCsv();
     }
@@ -50,6 +71,7 @@ void CsvManager::chargeFile(){
     // current csv file string
     currentfile = files[nightsIndices[countfiles]].path();
     // Load a CSV File.
+    csv.clear();
     csv.load(currentfile,  " ");
     // To know the total number of samples in csv and signals
     totalrows = csv.getNumRows();

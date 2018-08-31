@@ -52,11 +52,11 @@ class MyThread : public ofThread{
                 if (val=='P'){
                   judge = "POSSIBLE";
                 }
-                  st2filerep = judge + ',' + mycsv.currentWord + ',' + ofToString(mycsv.currentNight, 0, 3, '0');
-                  if(!evaluation){
-                    reportFile << st2filerep << "\n";
-                    evaluation = true;
-                  }
+                st2filerep = judge + ',' + mycsv.currentWord + ',' + ofToString(mycsv.currentNight, 0, 3, '0');
+                if(!evaluation){
+                  reportFile << st2filerep << "\n";
+                  evaluation = true;
+                }
               }
               if(mycsv.nextfile){
                 if (comunication){

@@ -55,7 +55,7 @@ void ofApp::update(){
     // there is not load process currently
     showedword = thread.mycsv.currentWord;
     showednight = ofToString(thread.mycsv.currentNight, 0, 3, '0');
-    int xcount = 10;
+    int xcount = 4;
     for(int i = countrow*xcount; i < (countrow+1)*xcount; i++)
     {
       for(int j = 0; j < nchannels; j++) {
@@ -88,7 +88,8 @@ void ofApp::draw(){
     ofRotateZ(90);
     ofTranslate(-65, -ofGetWidth());
     // plotter.updateHistory();
-    plotter.draw(0, 0, ofGetHeight()*2 + 140, ofGetWidth());
+    if (thread.mycsv.mode != 2)
+      plotter.draw(0, 0, ofGetHeight()*2 + 140, ofGetWidth());
     // Fade in/out sequence
     // ---------------------------------------------------
     ofSetColor( 0, 0, 0, 255 - alpha );
@@ -104,7 +105,8 @@ void ofApp::draw(){
     ofRotateZ(-90);
     ofTranslate(-ofGetHeight()-65, 0);
     // plotter.updateHistory();
-    plotter.draw(0, 0, ofGetHeight()*2 + 140, ofGetWidth());
+    if (thread.mycsv.mode != 2)
+      plotter.draw(0, 0, ofGetHeight()*2 + 140, ofGetWidth());
     // Fade in/out sequence
     // ---------------------------------------------------
     ofSetColor( 0, 0, 0, 255 - alpha );
@@ -118,6 +120,7 @@ void ofApp::draw(){
   }
   if (showinfo){
     info = "Night " + ofToString(showednight);
+    info = info + ", mode: " + ofToString(thread.mycsv.mode);
     info = info + ", posx: " + ofToString(posx);
     info = info + ", posy: " + ofToString(posy);
     info = info + ", n.channels: " + ofToString(nchannels);
@@ -129,7 +132,8 @@ void ofApp::draw(){
       thread.mycsv.nextfile = true;
   }
   glScalef(fliph, flipv, 1.0);
-  myfont.drawString(showedword, -myfont.stringWidth(showedword)/2, 0);
+  if (thread.mycsv.mode != 2)
+    myfont.drawString(showedword, -myfont.stringWidth(showedword)/2, 0);
 }
 
 //--------------------------------------------------------------
