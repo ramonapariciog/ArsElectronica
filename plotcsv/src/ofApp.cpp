@@ -111,7 +111,7 @@ void ofApp::draw(){
   else{
     ofRotate(track, 0.1, 0, 0);
     ofRotateZ(-90);
-    ofTranslate(-ofGetHeight()-65, 0);
+    ofTranslate(-ofGetHeight()*2, 0);
     // plotter.updateHistory();
     if (thread.mycsv.mode != 2)
     {
@@ -131,7 +131,7 @@ void ofApp::draw(){
     // ---------------------------------------------------
     ofSetColor(plotCol);
     ofRotateZ(90);
-    ofTranslate((ofGetWidth()/2) + posx, -ofGetWidth()/2 + 100 + posy);
+    ofTranslate((ofGetWidth()/2) + posx, -ofGetWidth() + 100 + posy);
   }
   int timeelapsed = (int)(ofGetElapsedTimef()-startTime);
   if (showinfo){
