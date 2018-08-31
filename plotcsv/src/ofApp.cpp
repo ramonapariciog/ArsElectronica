@@ -89,7 +89,15 @@ void ofApp::draw(){
     ofTranslate(-65, -ofGetWidth());
     // plotter.updateHistory();
     if (thread.mycsv.mode != 2)
+    {
       plotter.draw(0, 0, ofGetHeight()*2 + 140, ofGetWidth());
+    }
+    else
+    {
+      if (!thread.working)
+        alpha = 0;
+    }
+
     // Fade in/out sequence
     // ---------------------------------------------------
     ofSetColor( 0, 0, 0, 255 - alpha );
@@ -106,7 +114,14 @@ void ofApp::draw(){
     ofTranslate(-ofGetHeight()-65, 0);
     // plotter.updateHistory();
     if (thread.mycsv.mode != 2)
+    {
       plotter.draw(0, 0, ofGetHeight()*2 + 140, ofGetWidth());
+    }
+    else
+    {
+      if (!thread.working)
+        alpha = 0;
+    }
     // Fade in/out sequence
     // ---------------------------------------------------
     ofSetColor( 0, 0, 0, 255 - alpha );
@@ -118,6 +133,7 @@ void ofApp::draw(){
     ofRotateZ(90);
     ofTranslate((ofGetWidth()/2) + posx, -ofGetWidth()/2 + 100 + posy);
   }
+  int timeelapsed = (int)(ofGetElapsedTimef()-startTime);
   if (showinfo){
     info = "Night " + ofToString(showednight);
     info = info + ", mode: " + ofToString(thread.mycsv.mode);
@@ -125,15 +141,16 @@ void ofApp::draw(){
     info = info + ", posy: " + ofToString(posy);
     info = info + ", n.channels: " + ofToString(nchannels);
     info = info + ", Xtrack: " + ofToString(track);
-    int timeelapsed = (int)(ofGetElapsedTimef()-startTime);
     info = info + ", time: " + ofToString(timeelapsed);
+    ofSetColor(255, 120, 120, 255);
     infofont.drawString(info, -infofont.stringWidth(info)/2, 200);
-    if (timeelapsed > 75)
-      thread.mycsv.nextfile = true;
   }
   glScalef(fliph, flipv, 1.0);
+  ofSetColor(plotCol);
   if (thread.mycsv.mode != 2)
     myfont.drawString(showedword, -myfont.stringWidth(showedword)/2, 0);
+  if (timeelapsed > 65)
+    thread.mycsv.nextfile = true;
 }
 
 //--------------------------------------------------------------

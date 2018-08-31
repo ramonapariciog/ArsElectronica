@@ -65,6 +65,7 @@ class MyThread : public ofThread{
                 working = true;
                 if(lock()){
                   mycsv.chargeFile();
+                  ofSleepMillis(200);
                   unlock();
                   working = false;
                 }
