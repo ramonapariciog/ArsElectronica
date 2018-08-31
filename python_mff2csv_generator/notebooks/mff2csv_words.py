@@ -20,8 +20,10 @@ import numpy as np
 import time
 import datetime
 import sys
+import json
 sys.path.append('../src/')
 from events_parser import table_night
+from logtofile import CreateLogger
 
 # inceptions = pd.read_csv('results/inception.csv')
 # title  XXX_WWW_YYYY-MM-DD-HH-MM-SS.csv
@@ -37,19 +39,31 @@ def night_number(stringname):
 if not os.path.exists('../data/results'):
     os.mkdir('../data/results')
 
-if len(sys.argv)>1:
+selected_night = None
+if len(sys.argv) == 2:
 	dir_path = sys.argv[1]
+elif len(sys.argv) > 2:
+    dir_path = sys.argv[1]
+    selected_night = int(sys.argv[2])
 else:
-    # dir_path = "../data/raw/EEG"
     dir_path = "/media/quetzal/101NightsEEG"
+    # dir_path = "../data/raw/EEG"
+
+trad_dictionary = json.load(open('words2translate.json', 'r'))
+errors = CreateLogger("errorsDreams")
+bad_register_night = []
+total_words = np.empty((0, ))
 pattern = r"Nathalie\-\w+\_\d+\_\d+\.mff$"
 files = [f for f in os.listdir(dir_path) if re.match(pattern, f)]
-print(files)
 mne.set_log_level(verbose='CRITICAL')
 for f in files:
-    print("processing file: ", f)
     fields = re.findall(pattern='\d+', string=f)
     nonight = '{:03d}'.format(int(night_number(f)))
+    if selected_night is not None:
+        if int(night_number(f)) != selected_night:
+            continue
+    print("processing file: ", f)
+    print("Night number: ", int(night_number(f)))
     datehour = time.strftime('%Y-%m-%d-%H-%M-%S',
                              time.strptime('-'.join(fields[1:]),
                                            '%Y%m%d-%H%M%S'))
@@ -61,34 +75,39 @@ for f in files:
         events = mne.find_events(raw)
         table_words_eeg = table_night(night=int(nonight),
                                       obj={"raw": raw, "events": events})
+        total_words = np.hstack(tup=(total_words, table_words_eeg.word.values))
+        print(table_words_eeg.word.values)
         print(datetime.datetime.fromtimestamp(raw.info['meas_date'][0]))
-        s = [t for t,n,e in events if e==raw.event_id['DIN1']]
-
-        for i,inception in enumerate(s):
+        s = [t for t, n, e in events if e == raw.event_id['DIN1']]
+        for i, inception in enumerate(s):
             raw = mne.io.read_raw_egi(path_to_file,
                                       montage='GSN-HydroCel-256',
                                       preload=False)
             fs = raw.info['sfreq']
-            if inception/fs+55 <= raw.times.max():
+            if inception / fs + 55 <= raw.times.max():
                 timing = datetime.datetime.fromtimestamp(
-                    raw.info['meas_date'][0]+inception/fs)
+                    raw.info['meas_date'][0] + inception / fs)
                 timing = timing.strftime("%Y-%m-%d-%H-%M-%S")
                 print(f"{i}: {timing} {inception} samples {inception/fs} sec")
-                raw.crop(inception/fs-5, inception/fs+55)
+                raw.crop(inception / fs - 5, inception / fs + 55)
                 raw.load_data()
                 raw.filter(0.15, 50, fir_design='firwin', method='iir')
                 raw.set_eeg_reference('average', projection=True)
-                # raw.plot()
                 chs = mne.pick_types(raw.info, eeg=True)
-                data = raw.get_data()[chs,:]
-                word = table_words_eeg.loc[i].word
+                data = raw.get_data()[chs, :]
+                word = table_words_eeg.iloc[i].word
+                word = trad_dictionary.get(word, word)
                 pathres = "../data/results"
                 title = '{0}_{1}_{2}.csv'.format(nonight, word, timing)
                 pathres = os.path.join(pathres, title)
-                np.savetxt(pathres, data[chs,:].T)
+                np.savetxt(pathres, data[chs, :].T)
     except Exception as exception:
         typerror = type(exception).__name__
         lineno = exception.__traceback__.tb_lineno
         cause = exception.__str__()
-        print(f"{i}: {typerror} in {lineno}, {cause}, {timing} ",
-              f"{inception} samples {inception/fs} sec")
+        errors.logger.info(f"{i} {nonight} {f}: {inception} {word} {timing}")
+        errors.logger.exception(exception)
+        bad_register_night.append(nonight)
+        print(f"\nError\n{f}: {typerror} in {lineno}, {cause}")
+        # print(f"\nError\n{i}: {typerror} in {lineno}, {cause}, {timing} ",
+        #       f"{inception} samples {inception/fs} sec\n")
