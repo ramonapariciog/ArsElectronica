@@ -71,11 +71,16 @@ void ofApp::update(){
       thread.mycsv.nextfile = true;
     }
   }
-  else{
+  else {
    //  Animation for the transition time
     startTime = ofGetElapsedTimef();
-    if (alpha > fframes)
+    if (alpha > fframes) {
       alpha = alpha - fframes;
+      if (alpha < fframes*2) {
+        plotter.values.clear();
+        plotter.history.clear();
+      }
+    }
   }
 }
 
@@ -155,10 +160,16 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-  if (key == 's')
+  if (key == 's'){
       nchannels = nchannels + 8;
-  if (key == 'd')
+      plotter.values.clear();
+      plotter.history.clear();
+    }
+  if (key == 'd'){
       nchannels = nchannels - 8;
+      plotter.values.clear();
+      plotter.history.clear();
+    }
   if (key == OF_KEY_RIGHT)
       posx = posx + 10;
   if (key == OF_KEY_UP)
